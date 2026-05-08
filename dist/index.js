@@ -120,6 +120,7 @@ const dayjs_1 = __importDefault(__nccwpck_require__(478));
 const extract_images_1 = __nccwpck_require__(6945);
 const format_1 = __nccwpck_require__(6610);
 const file_type_1 = __nccwpck_require__(9372);
+const output_path_1 = __nccwpck_require__(2406);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const token = core.getInput('token');
@@ -175,11 +176,15 @@ function run() {
             }
         });
         const folderName = slugAsFolderName === true && attributes[slugKey]
-            ? attributes[slugKey]
+            ? String(attributes[slugKey])
             : String(issue.number);
-        const fullPath = useCustomPath
-            ? attributes[useCustomPathKey]
-            : path_1.default.join(destPath, folderName, `index${extension}`);
+        const fullPath = (0, output_path_1.resolveOutputPath)({
+            destPath,
+            folderName,
+            extension,
+            useCustomPath,
+            customPath: attributes[useCustomPathKey]
+        });
         const dirname = path_1.default.dirname(fullPath);
         if (!fs_1.default.existsSync(dirname)) {
             mkdirp_1.mkdirp.sync(dirname);
@@ -252,6 +257,42 @@ try {
 }
 catch (err) {
     core.setFailed(err.message);
+}
+
+
+/***/ }),
+
+/***/ 2406:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.resolveOutputPath = void 0;
+const path_1 = __importDefault(__nccwpck_require__(1017));
+const OUTPUT_ROOT = 'docs';
+function resolveOutputPath({ destPath, folderName, extension, useCustomPath, customPath }) {
+    const requestedPath = useCustomPath
+        ? getCustomPath(customPath)
+        : path_1.default.join(destPath, folderName, `index${extension}`);
+    const outputPath = path_1.default.resolve(requestedPath);
+    const outputRoot = path_1.default.resolve(OUTPUT_ROOT);
+    const relativePath = path_1.default.relative(outputRoot, outputPath);
+    if (relativePath === '' ||
+        (!relativePath.startsWith('..') && !path_1.default.isAbsolute(relativePath))) {
+        return outputPath;
+    }
+    throw new Error(`Output path must stay within ${OUTPUT_ROOT}/.`);
+}
+exports.resolveOutputPath = resolveOutputPath;
+function getCustomPath(customPath) {
+    if (typeof customPath === 'string' && customPath.trim() !== '') {
+        return customPath;
+    }
+    throw new Error(`Custom output path must be a non-empty string inside ${OUTPUT_ROOT}/.`);
 }
 
 

@@ -10,6 +10,7 @@ import dayjs from 'dayjs'
 import {extractImages} from './extract-images'
 import {formatFrontMatterValue} from './format'
 import {fileTypeFromBuffer} from 'file-type'
+import {resolveOutputPath} from './output-path'
 
 async function run(): Promise<void> {
   const token: string = core.getInput('token')
@@ -90,11 +91,15 @@ async function run(): Promise<void> {
 
   const folderName =
     slugAsFolderName === true && attributes[slugKey]
-      ? attributes[slugKey]
+      ? String(attributes[slugKey])
       : String(issue.number)
-  const fullPath = useCustomPath
-    ? attributes[useCustomPathKey]
-    : path.join(destPath, folderName, `index${extension}`)
+  const fullPath = resolveOutputPath({
+    destPath,
+    folderName,
+    extension,
+    useCustomPath,
+    customPath: attributes[useCustomPathKey]
+  })
   const dirname = path.dirname(fullPath)
 
   if (!fs.existsSync(dirname)) {

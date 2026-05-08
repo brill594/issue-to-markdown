@@ -7,8 +7,8 @@ inputs:
     required: true
   dest:
     required: false
-    description: 'Destination path for: `<project-root>/<dest>/<slug>/index.md`'
-    default: 'content'
+    description: 'Destination path for: `<project-root>/<dest>/<slug>/index.md`. Must stay under `docs/`.'
+    default: 'docs'
   extension:
     description: File extension
     required: false
@@ -29,7 +29,7 @@ inputs:
     description: List of authors that are authorized to perform this Action
     required: false
   use_custom_path:
-    description: Let user provide a custom path for output file instead of relying on conventions
+    description: Let user provide a custom path for output file instead of relying on conventions. Custom paths must stay under `docs/`.
     required: false
     default: false
   use_custom_path_key:
@@ -78,5 +78,5 @@ inputs:
     default: false
 
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'

@@ -72,7 +72,7 @@ For those unfamiliar with GitHub Actions, here's a breakdown of the process:
     token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 ```
 
-2. In this step, the issue is transformed into a markdown file, located in its own folder (default location: `content/<slug or issue_number>/index.md`). The token is also necessary here.
+2. In this step, the issue is transformed into a markdown file, located in its own folder (default location: `docs/<slug or issue_number>/index.md`). The token is also necessary here.
 
 ```yml
 - uses: eunjae-lee/issue-to-markdown@v1
@@ -121,8 +121,8 @@ Click here to see the screenshots.
     # All parameters below are optional.
     # ----------------------------------
 
-    # New files are located at `<project-root>/<dest>/<slug or issue_number>/index.md`. (default: 'content')
-    dest: 'content'
+    # New files are located at `<project-root>/<dest>/<slug or issue_number>/index.md` and must stay under `docs/`. (default: 'docs')
+    dest: 'docs'
 
     # (default: '.md')
     extension: '.md'
@@ -141,7 +141,7 @@ Click here to see the screenshots.
       - username1
       - username2
 
-    # Let user provide a custom path for output file instead of relying on conventions (default: false)
+    # Let user provide a custom path for output file instead of relying on conventions. Custom paths must stay under `docs/`. (default: false)
     use_custom_path: false
 
     # Key for the custom path (when use_custom_path is true, default: 'full_path')
